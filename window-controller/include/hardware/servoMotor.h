@@ -11,7 +11,7 @@ class ServoMotor : public Window {
 
 public:
     ServoMotor(int pin);
-    void open(int percentage);
+    void open(int percentage);  // 0% = 0 gr, 100% = 90 gr
 
 private:
     int pin;
