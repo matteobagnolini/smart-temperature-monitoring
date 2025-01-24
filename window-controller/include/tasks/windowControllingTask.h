@@ -8,15 +8,16 @@
 class WindowControllingTask : public Task {
 
 public:
-    WindowControllingTask(int pin);
+    WindowControllingTask(int motorPin, int potPin, int buttonPin);
     void init(int period);
     void tick();
 
 private:
-    int pin;
     Window *window;
     Potentiometer* pot;
     Button* button;
     enum { AUTOMATIC, MANUAL } state;
+
+    void changeState();
 
 };
