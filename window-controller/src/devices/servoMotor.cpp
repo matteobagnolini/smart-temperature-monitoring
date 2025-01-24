@@ -3,6 +3,7 @@
 
 ServoMotor::ServoMotor(int pin) {
     this->pin = pin;
+    motor.attach(pin);
 }
 
 void ServoMotor::open(int percentage) {
