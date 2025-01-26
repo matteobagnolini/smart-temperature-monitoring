@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "msgPrefixes.h"
 
 /* ======= Message class ======= */
 class Msg {
