@@ -22,4 +22,3 @@ private:
 
 };
 
-extern LCD lcd;

@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include "kernel/scheduler.h"
 #include "tasks/windowControllingTask.h"
+#include "controller/systemController.h"
 
 #include "config.h"
 
 Scheduler sched;
+Controller contr;
 
 void setup() {
 
@@ -12,7 +14,8 @@ void setup() {
 
     sched.init(50);
 
-    Task *windowControllingTask = new WindowControllingTask(SERVOMOTOR_PIN, POTENTIOMETER_PIN, BUTTON_PIN);
+    Task *windowControllingTask =
+        new WindowControllingTask(contr, SERVOMOTOR_PIN, POTENTIOMETER_PIN, BUTTON_PIN);
     windowControllingTask->init(150);
     sched.addTask(windowControllingTask);
 }

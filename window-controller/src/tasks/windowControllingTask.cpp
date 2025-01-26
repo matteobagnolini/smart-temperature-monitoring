@@ -1,11 +1,14 @@
 #include "tasks/windowControllingTask.h"
 #include "hardware/lcd.h"
+#include "controller/systemController.h"
 #include <Arduino.h>
 
-WindowControllingTask::WindowControllingTask(int motorPin, int potPin, int buttonPin) {
+WindowControllingTask::WindowControllingTask(Controller controller, int motorPin, int potPin, int buttonPin) {
+    this->controller = controller;
     this->window = new ServoMotor(motorPin);
     this->pot = new Potentiometer(potPin);
     this->button = new Button(buttonPin);
+    this->lcd = new LCD();
 }
 
 void WindowControllingTask::init(int period) {
@@ -16,22 +19,17 @@ void WindowControllingTask::init(int period) {
 void WindowControllingTask::tick() {
     if (button->isPressed())
         changeState();
+    String lcdMsg = prepareDisplayMsg();
 
     switch(state) {
         case AUTOMATIC:
-            // lcd.display("MODE: Automatic\nTEMP:0.0");
-            // set window based on received data from serial line
+            lcd->display(lcdMsg);
+            openWindowAutomatic();
         break;
 
         case MANUAL:
-            // lcd.display("MODE: Manual\nTEMP:0.0");
-            float potValue = pot->readValue();  // value between 0 to 1023
-            Serial.print("Potvalue: ");
-            Serial.println(potValue);
-            int perc = map(potValue, 0, 1023, 0, 100);
-            Serial.print("Perc: ");
-            Serial.println(perc);
-            window->open(perc);
+            lcd->display(lcdMsg);
+            openWindowManual();
         break;
 
     }
@@ -39,7 +37,37 @@ void WindowControllingTask::tick() {
 
 void WindowControllingTask::changeState() {
     if (state == AUTOMATIC)
-        state = MANUAL;
+        setState(MANUAL);
     else
-        state = AUTOMATIC;
+        setState(AUTOMATIC);
+}
+
+void WindowControllingTask::setState(windowState s) {
+    state = s;
+    s == MANUAL ? controller.setStateManual() : controller.setStateAutomatic();
+}
+
+void WindowControllingTask::openWindowManual() {
+    float potValue = pot->readValue();  // value between 0 to 1023
+    int perc = map(potValue, 0, 1023, 0, 100);
+    window->open(perc);
+
+    controller.setCurrOpening(perc);
+}
+
+void WindowControllingTask::openWindowAutomatic() {
+    float perc = controller.getCurrOpening();
+    window->open(perc);
+}
+
+String WindowControllingTask::prepareDisplayMsg() {
+    float perc = controller.getCurrOpening();
+    String msg = "Window Level: " + String(perc) + "\n";
+    
+    if (state == AUTOMATIC) {
+        msg.concat("State: AUTOMATIC\n");
+    } else if (state == MANUAL) {
+        msg.concat("State: MANUAL\nTemp: " + String(controller.getCurrTemp()));
+    }
+    return msg;
 }
