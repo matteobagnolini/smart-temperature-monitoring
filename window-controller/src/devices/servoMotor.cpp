@@ -7,7 +7,7 @@ ServoMotor::ServoMotor(int pin) {
 }
 
 void ServoMotor::open(int percentage) {
-    float angle = (180.0 * percentage) / 100;
+    float angle = (90.0 * percentage) / 100;
     setPosition(angle);
 }
 
