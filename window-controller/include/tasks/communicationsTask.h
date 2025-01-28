@@ -2,9 +2,10 @@
 #include "kernel/task.h"
 #include "controller/systemController.h"
 
-class CommunicationsTask : Task {
+class CommunicationsTask : public Task {
 
 public:
+    CommunicationsTask(Controller controller);
     void init(int period);
     void tick();
 
