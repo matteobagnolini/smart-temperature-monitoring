@@ -34,3 +34,7 @@ void TemperatureTask::loop() {
         break;
     }
 }
+
+int TemperatureTask::getPeriod() {
+    return period;
+}

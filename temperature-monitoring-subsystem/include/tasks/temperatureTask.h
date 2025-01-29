@@ -13,6 +13,7 @@ public:
     TemperatureTask(int tempPin, int redLedPin, int greenLedPin);
     void loop();
     void updatePeriod(int newPeriod);
+    int getPeriod();
 
 private:
     int period;
