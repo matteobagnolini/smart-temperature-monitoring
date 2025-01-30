@@ -3,7 +3,7 @@
 #include "controller/systemController.h"
 #include <Arduino.h>
 
-WindowControllingTask::WindowControllingTask(Controller controller, int motorPin, int potPin, int buttonPin) {
+WindowControllingTask::WindowControllingTask(Controller *controller, int motorPin, int potPin, int buttonPin) {
     this->controller = controller;
     this->window = new ServoMotor(motorPin);
     this->pot = new Potentiometer(potPin);
@@ -44,7 +44,7 @@ void WindowControllingTask::changeState() {
 
 void WindowControllingTask::setState(windowState s) {
     state = s;
-    s == MANUAL ? controller.setStateManual() : controller.setStateAutomatic();
+    s == MANUAL ? controller->setStateManual() : controller->setStateAutomatic();
 }
 
 void WindowControllingTask::openWindowManual() {
@@ -52,22 +52,22 @@ void WindowControllingTask::openWindowManual() {
     int perc = map(potValue, 0, 1023, 0, 100);
     window->open(perc);
 
-    controller.setCurrOpening(perc);
+    controller->setCurrOpening(perc);
 }
 
 void WindowControllingTask::openWindowAutomatic() {
-    float perc = controller.getCurrOpening();
+    float perc = controller->getCurrOpening();
     window->open(perc);
 }
 
 String WindowControllingTask::prepareDisplayMsg() {
-    float perc = controller.getCurrOpening();
+    float perc = controller->getCurrOpening();
     String msg = "Window Level: " + String(perc) + "\n";
     
     if (state == AUTOMATIC) {
         msg.concat("State: AUTOMATIC\n");
     } else if (state == MANUAL) {
-        msg.concat("State: MANUAL\nTemp: " + String(controller.getCurrTemp()));
+        msg.concat("State: MANUAL\nTemp: " + String(controller->getCurrTemp()));
     }
     return msg;
 }

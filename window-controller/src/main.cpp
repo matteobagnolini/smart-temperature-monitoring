@@ -15,12 +15,14 @@ void setup() {
 
     sched.init(50);
 
+    contr.init();
+
     Task *windowControllingTask =
-        new WindowControllingTask(contr, SERVOMOTOR_PIN, POTENTIOMETER_PIN, BUTTON_PIN);
+        new WindowControllingTask(&contr, SERVOMOTOR_PIN, POTENTIOMETER_PIN, BUTTON_PIN);
     windowControllingTask->init(150);
     sched.addTask(windowControllingTask);
 
-    Task *commTask = new CommunicationsTask(contr);
+    Task *commTask = new CommunicationsTask(&contr);
     commTask->init(200);
     sched.addTask(commTask);
 }

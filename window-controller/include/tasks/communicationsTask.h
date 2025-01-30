@@ -5,12 +5,12 @@
 class CommunicationsTask : public Task {
 
 public:
-    CommunicationsTask(Controller controller);
+    CommunicationsTask(Controller *controller);
     void init(int period);
     void tick();
 
 private:
-    Controller controller;
+    Controller *controller;
 
     void sendCurrentStates();
     void receiveUpdatedStates();

@@ -11,12 +11,12 @@
 class WindowControllingTask : public Task {
 
 public:
-    WindowControllingTask(Controller controller, int motorPin, int potPin, int buttonPin);
+    WindowControllingTask(Controller *controller, int motorPin, int potPin, int buttonPin);
     void init(int period);
     void tick();
 
 private:
-    Controller controller;
+    Controller *controller;
     Window *window;
     Potentiometer* pot;
     Button* button;

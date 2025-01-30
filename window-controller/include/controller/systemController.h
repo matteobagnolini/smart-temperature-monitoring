@@ -8,10 +8,11 @@
 class Controller {
 
 public:
+    void init();
     void setCurrTemp(float temp);
     float getCurrTemp();
-    void setCurrOpening(float perc);
-    float getCurrOpening(); // TODO: change this name in smtg like getOpeningFromControlUnit()
+    void setCurrOpening(int perc);
+    int getCurrOpening(); // TODO: change this name in smtg like getOpeningFromControlUnit()
     void setStateManual();
     void setStateAutomatic();
     bool isStateManual();
@@ -19,7 +20,7 @@ public:
 
 private:
     float currTemp;
-    float currOpeningPerc;
+    int currOpeningPerc;
     bool isCurrStateManual;
     bool isCurrStateAutomatic;
 
