@@ -11,7 +11,7 @@ type SerialConnection struct {
 	port serial.Port
 }
 
-func openSerial(portName string, baudRate int) (*SerialConnection, error) {
+func OpenSerial(portName string, baudRate int) (*SerialConnection, error) {
 	mode := &serial.Mode{
 		BaudRate: baudRate,
 	}
@@ -42,11 +42,10 @@ func (s *SerialConnection) Read() {
 }
 
 func (s *SerialConnection) Write(msg string) {
-	n, err := s.port.Write([]byte(msg))
+	_, err := s.port.Write([]byte(msg))
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Sent %v bytes\n", n)
 }
 
 // TODO: need to parse messages from/to serial line
