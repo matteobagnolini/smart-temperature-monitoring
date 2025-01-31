@@ -20,7 +20,7 @@ type TemperatureState string
 const (
 	NORMAL  TemperatureState = "NORMAL"
 	HOT     TemperatureState = "HOT"
-	TOO_HIT TemperatureState = "TOO_HOT"
+	TOO_HOT TemperatureState = "TOO_HOT"
 )
 
 type StateMachine struct {
