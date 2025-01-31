@@ -11,6 +11,8 @@ type SerialConnection struct {
 	port serial.Port
 }
 
+var SerialChannel = make(chan string)
+
 func OpenSerial(portName string, baudRate int) (*SerialConnection, error) {
 	mode := &serial.Mode{
 		BaudRate: baudRate,
@@ -37,7 +39,7 @@ func (s *SerialConnection) Read() {
 			fmt.Println("\nEOF") // read until no bytes available
 			break
 		}
-		fmt.Printf("%v", string(buf[:n]))
+		SerialChannel <- string(buf[:n])
 	}
 }
 
