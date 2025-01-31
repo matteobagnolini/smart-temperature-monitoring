@@ -4,7 +4,7 @@
 #include "hardware/temp.h"
 #include "hardware/led.h"
 
-#define BASE_PERIOD 250
+#define BASE_PERIOD 1000
 
 
 class TemperatureTask : public Task {

@@ -8,9 +8,7 @@ Temp::Temp(int pin) {
 
 float Temp::readTemp() {
     int reading = analogRead(this->pin);
-    Serial.print("Voltage: ");
     float voltage = (reading) / 1023.0;
-    Serial.println(voltage);
     float tempC = (voltage - 0.5) * 100;
     return tempC;
 }

@@ -13,10 +13,43 @@ void Communications::init(std::function<void (char *, uint8_t *, unsigned int)> 
     wifi = WiFiHandler();
     wifi.init(SSID, PSWRD);
     wifi.connect();
+
+    this->callback = callback;
     
     // MQTT connection
     client.setServer(MQTT_SERVER, SERVER_PORT);
 
+    mqttReconnect();
+}
+
+void Communications::loop() {
+    client.loop();      // To check for upcoming messages
+
+    if (mqttProblem) {
+        mqttReconnect();
+    }
+    if (wifiProblem) {
+        wifiReconnect();
+    }
+}
+
+bool Communications::isConnectionOk() {
+    if (!client.connected()) {
+        Serial.println("problem with mqtt");
+        mqttProblem = true;
+    }
+    if (!wifi.isConnectionOk()) {
+        Serial.println("problem with wifi");
+        wifiProblem = true;
+    }
+    return !mqttProblem && !wifiProblem;
+}
+
+void Communications::sendMessage(const char *msg) {
+    client.publish(TOPIC, msg);
+}
+
+void Communications::mqttReconnect() {
     while (!client.connected()) {
         Serial.print("Attempting MQTT connection...");
         if (client.connect(CLIENT_ID)) {
@@ -31,16 +64,10 @@ void Communications::init(std::function<void (char *, uint8_t *, unsigned int)> 
         }
     }
     client.setCallback(callback);
+    mqttProblem = false;
 }
 
-void Communications::loop() {
-    client.loop();      // To check for upcoming messages
-}
-
-bool Communications::isConnectionOk() {
-    return client.connected() && wifi.isConnectionOk();
-}
-
-void Communications::sendMessage(const char *msg) {
-    client.publish(TOPIC, msg);
+void Communications::wifiReconnect() {
+    wifi.connect();
+    wifiProblem = false;
 }

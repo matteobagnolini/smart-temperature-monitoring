@@ -19,13 +19,11 @@ void setup() {
     comms->init(callback);
 
     tempTask = new TemperatureTask(TEMP_PIN, REDLED_PIN, GREENLED_PIN);
-    xTaskCreatePinnedToCore(tempTaskCode, "Temperature Task", 1000, NULL, 1, &tempTaskHandle, 1);
+    xTaskCreatePinnedToCore(tempTaskCode, "Temperature Task", 8000, NULL, 1, &tempTaskHandle, 1);
 }
 
 void loop() {
     comms->loop();
-    Serial.println("looped");
-    delay(500);
 }
 
 void tempTaskCode(void *argument) {

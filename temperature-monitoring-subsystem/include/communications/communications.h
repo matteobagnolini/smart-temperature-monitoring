@@ -15,6 +15,12 @@ public:
 private:
     PubSubClient client;
     WiFiHandler wifi;
+    std::function<void (char *, uint8_t *, unsigned int)> callback;
+    bool mqttProblem;
+    bool wifiProblem;
+
+    void mqttReconnect();
+    void wifiReconnect();
 
 };
 

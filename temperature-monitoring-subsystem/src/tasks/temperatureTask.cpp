@@ -9,6 +9,9 @@ TemperatureTask::TemperatureTask(int tempPin, int redLedPin, int greenLedPin) {
 
     state = PROBLEM;
     period = BASE_PERIOD;
+
+    redLed->switchOff();
+    greenLed->switchOff();
 }
 
 void TemperatureTask::loop() {
@@ -21,6 +24,7 @@ void TemperatureTask::loop() {
                 state = WORKING;
             }
             redLed->switchOn();
+            greenLed->switchOff();
         break;
 
         case WORKING:
@@ -29,8 +33,9 @@ void TemperatureTask::loop() {
                 state = PROBLEM;
             }
             greenLed->switchOn();
+            redLed->switchOff();
             float currTemp = temp->readTemp();
-            // send currTemp;
+            comms->sendMessage(String(currTemp, 2).c_str());
         break;
     }
 }
