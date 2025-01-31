@@ -29,8 +29,8 @@ void CommunicationsTask::tick() {
         Msg *msg = MsgService.receiveMsg();
         if (msg == NULL)
             return;
-        if (msg->getContent().substring(0,3) == TEMP_PREF) {
-            controller->setCurrTemp(msg->getContent().substring(4,6).toFloat());
+        if (msg->getContent().substring(0,2) == TEMP_PREF) {
+            controller->setCurrTemp(msg->getContent().substring(3,6).toFloat());
         }
     }
 };
