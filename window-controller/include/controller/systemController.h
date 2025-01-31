@@ -17,11 +17,13 @@ public:
     void setStateAutomatic();
     bool isStateManual();
     bool isStateAutomatic();
+    bool hasStateChanged(); // To check if the current state has changed in last update
 
 private:
     float currTemp;
     int currOpeningPerc;
     bool isCurrStateManual;
     bool isCurrStateAutomatic;
+    bool stateHasChanged;
 
 };

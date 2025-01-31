@@ -23,11 +23,13 @@ int Controller::getCurrOpening() {
 void Controller::setStateAutomatic() {
     this->isCurrStateAutomatic = true;
     this->isCurrStateManual = false;
+    this->stateHasChanged = true;
 }
 
 void Controller::setStateManual() {
     this->isCurrStateManual = true;
     this->isCurrStateAutomatic = false;
+    this->stateHasChanged = true;
 }
 
 bool Controller::isStateAutomatic() {
@@ -36,4 +38,12 @@ bool Controller::isStateAutomatic() {
 
 bool Controller::isStateManual() {
     return this->isCurrStateManual;
+}
+
+bool Controller::hasStateChanged() {
+    if (stateHasChanged) {
+        stateHasChanged = false;
+        return true;
+    }
+    return stateHasChanged;
 }
