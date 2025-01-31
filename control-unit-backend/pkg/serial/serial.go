@@ -47,5 +47,3 @@ func (s *SerialConnection) Write(msg string) {
 		log.Fatal(err)
 	}
 }
-
-// TODO: need to parse messages from/to serial line
