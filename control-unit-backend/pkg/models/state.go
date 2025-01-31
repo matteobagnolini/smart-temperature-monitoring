@@ -24,24 +24,66 @@ const (
 )
 
 type StateMachine struct {
-	SysState  SystemState
-	TempState TemperatureState
-	mu        sync.Mutex
+	windPercOpening int
+	lastTemp        float32
+	sysState        SystemState
+	tempState       TemperatureState
+	mu              sync.Mutex
 }
 
+// Singleton
 var System = StateMachine{
-	SysState:  AUTOMATIC,
-	TempState: NORMAL,
+	windPercOpening: 0,
+	lastTemp:        0.0,
+	sysState:        AUTOMATIC,
+	tempState:       NORMAL,
 }
 
-func (s *StateMachine) GetSysState() SystemState {
+/* ====== Setters & Getters ======*/
+func (s *StateMachine) SetWindPercOpening(perc int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.SysState
+	s.windPercOpening = perc
 }
 
-func (s *StateMachine) GetTempState() TemperatureState {
+func (s *StateMachine) SetLastTemp(t float32) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.TempState
+	s.lastTemp = t
+}
+
+func (s *StateMachine) SetSysState(state SystemState) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.sysState = state
+}
+
+func (s *StateMachine) SetTempState(state TemperatureState) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.tempState = state
+}
+
+func (s *StateMachine) SysState() SystemState {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.sysState
+}
+
+func (s *StateMachine) TempState() TemperatureState {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.tempState
+}
+
+func (s *StateMachine) LastTemp() float32 {
+	s.mu.Lock()
+	defer s.mu.Lock()
+	return s.lastTemp
+}
+
+func (s *StateMachine) WindowPercOpening() int {
+	s.mu.Lock()
+	defer s.mu.Lock()
+	return s.windPercOpening
 }
