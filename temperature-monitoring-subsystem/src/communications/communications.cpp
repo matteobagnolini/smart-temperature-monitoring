@@ -45,8 +45,8 @@ bool Communications::isConnectionOk() {
     return !mqttProblem && !wifiProblem;
 }
 
-void Communications::sendMessage(const char *msg) {
-    client.publish(TOPIC, msg);
+void Communications::sendMessage(const char *topic, const char *msg) {
+    client.publish(topic, msg);
 }
 
 void Communications::mqttReconnect() {
@@ -54,7 +54,7 @@ void Communications::mqttReconnect() {
         Serial.print("Attempting MQTT connection...");
         if (client.connect(CLIENT_ID)) {
             Serial.println("connected");
-            client.subscribe(TOPIC);
+            client.subscribe(TOPIC_PERIOD);
             Serial.println("Subscribed");
         } else {
             Serial.print("failed, rc=");

@@ -28,8 +28,9 @@ void loop() {
 
 void tempTaskCode(void *argument) {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = tempTask->getPeriod() / portTICK_PERIOD_MS;
+    TickType_t xFrequency;
     for ( ;; ) {
+        xFrequency = tempTask->getPeriod() / portTICK_PERIOD_MS;
         tempTask->loop();
         xTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
@@ -37,4 +38,9 @@ void tempTaskCode(void *argument) {
 
 void callback(char *topic, byte *payload, unsigned int length) {
     Serial.println(String("Message arrived on [") + topic + "] len: " + length );
+    String updateFrequency = "";
+    for (unsigned int i = 0; i < length; i++) {
+        updateFrequency += (char)payload[i];
+    }
+    tempTask->updatePeriod(updateFrequency.toInt());
 }

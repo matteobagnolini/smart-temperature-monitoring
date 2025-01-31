@@ -10,7 +10,7 @@ public:
     void init(std::function<void (char *, uint8_t *, unsigned int)>function);
     void loop();
     bool isConnectionOk();
-    void sendMessage(const char *msg);
+    void sendMessage(const char *topic, const char *msg);
 
 private:
     PubSubClient client;
