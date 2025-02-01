@@ -11,14 +11,13 @@ class LCD : public UserLCD {
 
 public:
     LCD();
-    void display(String msg);
+    void display(const char *msg);
     void clear();
     void turnDisplayOn();
     void turnDisplayOff();
 
 private:
     LiquidCrystal_I2C lcd;
-    String currentMsg;
 
 };
 

@@ -4,16 +4,11 @@
 LCD::LCD() : lcd(LCD_I2C_ADDR, LCD_COLS, LCD_ROWS) {
     lcd.init();
     lcd.backlight();
-    currentMsg = "";
 }
 
-void LCD::display(String msg) {
-    // Msg is displayed only if it's different from the current one
-    if (msg != currentMsg) {
+void LCD::display(const char *msg) {
         lcd.clear();
         lcd.print(msg);
-        currentMsg = msg;
-    } else { }
 }
 
 void LCD::clear() {
