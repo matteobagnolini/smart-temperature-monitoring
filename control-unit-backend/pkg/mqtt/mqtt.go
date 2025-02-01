@@ -7,23 +7,42 @@ import (
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 
-// Usage of MQTT.Client:
-// t := client.Publish("topic", qos, retained, msg)
-// https://pkg.go.dev/github.com/eclipse/paho.mqtt.golang@v1.5.0#section-readme
+var TempChannel = make(chan string)
 
-func ConnectMQTT(broker string) MQTT.Client {
+var client MQTT.Client
+
+func ConnectMQTT(broker string, topic string) {
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(broker)
 	opts.SetClientID("control-unit-backend")
-	opts.SetDefaultPublishHandler(messageHandler)
+	opts.SetDefaultPublishHandler(defaultMessageHandler)
 
-	client := MQTT.NewClient(opts)
+	client = MQTT.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatal(token.Error())
 	}
-	return client
+
+	client.Subscribe(topic, 1, temperatureMessageHandler)
+
+	fmt.Println("Connected to MQTT")
 }
 
-func messageHandler(client MQTT.Client, msg MQTT.Message) {
-	fmt.Printf("Received temperature: %s\n", msg.Payload())
+func defaultMessageHandler(client MQTT.Client, msg MQTT.Message) {
+	fmt.Printf("Received msg: %s\n", msg.Payload())
+}
+
+func temperatureMessageHandler(client MQTT.Client, msg MQTT.Message) {
+	// fmt.Printf("Received temperature: %s from Topic\n", msg.Payload())
+	temp := string(msg.Payload())
+	// temp, _ := strconv.ParseFloat(string(msg.Payload()), 32)
+	// models.DataSampler.AddData(float32(temp), time.Now().Format(time.RFC3339)) // Add data to sampler
+	TempChannel <- temp
+}
+
+func SendMsg(topic string, msg string) {
+	client.Publish(topic, 1, false, msg)
+}
+
+func SendFrequencyMsg(msg string) {
+	SendMsg("smart-temp/esp32/period", msg)
 }
