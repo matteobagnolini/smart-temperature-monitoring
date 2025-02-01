@@ -19,7 +19,7 @@ void WindowControllingTask::init(int period) {
 void WindowControllingTask::tick() {
     if (button->isPressed())
         changeState();
-    String lcdMsg = prepareDisplayMsg();
+    const  char *lcdMsg = prepareDisplayMsg();
 
     switch(state) {
         case AUTOMATIC:
@@ -60,14 +60,10 @@ void WindowControllingTask::openWindowAutomatic() {
     window->open(perc);
 }
 
-String WindowControllingTask::prepareDisplayMsg() {
+const char *WindowControllingTask::prepareDisplayMsg() {
     float perc = controller->getCurrOpening();
-    String msg = "Window Level: " + String(perc) + "\n";
+    const char *msg = "Window Level";
+    // TODO:
     
-    if (state == AUTOMATIC) {
-        msg.concat("State: AUTOMATIC\n");
-    } else if (state == MANUAL) {
-        msg.concat("State: MANUAL\nTemp: " + String(controller->getCurrTemp()));
-    }
     return msg;
 }

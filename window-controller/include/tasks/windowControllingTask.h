@@ -28,6 +28,6 @@ private:
 
     void openWindowManual();
     void openWindowAutomatic();
-    String prepareDisplayMsg();
+    const char *prepareDisplayMsg();
 
 };

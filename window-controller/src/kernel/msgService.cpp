@@ -29,7 +29,7 @@ void MsgServiceClass::init(){
   msgAvailable = false;  
 }
 
-void MsgServiceClass::sendMsg(const String& msg){
+void MsgServiceClass::sendMsg(const char *msg){
   Serial.println(msg);  
 }
 
@@ -38,6 +38,9 @@ void serialEvent() {
   while (Serial.available()) {
     char ch = (char) Serial.read();
     if (ch == '\n'){
+      if (MsgService.currentMsg != NULL) {
+        delete MsgService.currentMsg;
+      }
       MsgService.currentMsg = new Msg(content);
       MsgService.msgAvailable = true;      
     } else {
