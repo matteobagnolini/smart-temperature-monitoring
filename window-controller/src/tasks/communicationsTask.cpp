@@ -1,5 +1,6 @@
 #include "tasks/communicationsTask.h"
 #include "kernel/msgService.h"
+#include "kernel/memCheck.h"
 
 CommunicationsTask::CommunicationsTask(Controller *controller) {
     this->controller = controller;
@@ -9,39 +10,16 @@ void CommunicationsTask::init(int period) {
     Task::init(period);
 }
 
-int freeRam() {
-
-  extern int __heap_start,*__brkval;
-
-  int v;
-
-  return (int)&v - (__brkval == 0  
-
-    ? (int)&__heap_start : (int) __brkval);  
-
-}
-
-void display_freeram() {
-
-    MsgService.sendMsg("- SRAM left: ");
-    char *buf;
-    buf = (char *)malloc(sizeof(*buf) * (10));
-    sprintf(buf, "%d", freeRam());
-    MsgService.sendMsg(buf);
-    free(buf);
-}
-
 void CommunicationsTask::tick() {
-    if (controller->isStateAutomatic()) {    // AUTOMATIC State
+        if (controller->isStateAutomatic()) {    // AUTOMATIC State
         if (controller->hasStateChanged()) {
             MsgService.sendMsg(STATE_AUTO);
         }
         Msg *msg = MsgService.receiveMsg();
         if (msg == NULL)
             return;
-        const char *content = msg->getContent().c_str();
-        if (strncmp(content, WINDOW_PREF, 2) == 0) {
-            int perc = atoi(content + 3);
+        if (msg->getContent().substring(0,2) == WINDOW_PREF) {
+            int perc = msg->getContent().substring(3,6).toInt();
             controller->setCurrOpening(perc);
         }
         delete msg;
@@ -53,11 +31,11 @@ void CommunicationsTask::tick() {
         Msg *msg = MsgService.receiveMsg();
         if (msg == NULL)
             return;
-        const char *content = msg->getContent().c_str();
-        if (strncmp(content, TEMP_PREF, 2) == 0) {
-            controller->setCurrTemp(atoi(content + 3));
+        if (msg->getContent().substring(0,2) == TEMP_PREF) {
+            controller->setCurrTemp(msg->getContent().substring(3,7).toFloat());
         }
+        // TODO: need to send window opening
         delete msg;
-    } 
-    display_freeram();
+    }
+    // display_freeram();
 };
