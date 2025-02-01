@@ -4,31 +4,27 @@ import (
 	"control-unit-backend/pkg/models"
 	"control-unit-backend/pkg/mqtt"
 	"control-unit-backend/pkg/serial"
-	"log"
-	"strconv"
-	"time"
 )
+
+const BROKER_ADDR = "broker.mqtt-dashboard.com:1883"
+const TOPIC = "smart-temp/esp32/temp"
+
+const SERIAL_PORT = "/dev/cu.usbserial-14120"
+const BAUD_RATE = 9600
 
 func main() {
 
-	sampler := models.Sampler{}
-	sampler.StartSampling() // start sampling subroutine
+	models.DataSampler.StartSampling() // start sampling subroutine
 
-	client := mqtt.ConnectMQTT("broker.mqtt-dashboard.com:1883")
-	defer client.Disconnect(250)
+	mqtt.ConnectMQTT(BROKER_ADDR, TOPIC)
+	go models.StartMQTTListener()
 
-	serialConn, err := serial.OpenSerial("/dev/cu.usbserial-14120", 9600)
-	if err != nil {
-		log.Fatal(err)
-	}
+	serial.SerialConn, _ = serial.OpenSerial(SERIAL_PORT, BAUD_RATE)
 
-	go serialConn.Read()
+	go serial.SerialConn.Read()
 
-	perc := 0
-	for {
-		serialConn.Write("wi:" + strconv.Itoa(perc) + "\n")
-		perc = (perc + 50) % 150
-		time.Sleep(2 * time.Second)
-	}
+	go models.StartSerialListener()
+
+	models.Tick()
 
 }
