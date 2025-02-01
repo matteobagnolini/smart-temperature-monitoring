@@ -87,3 +87,5 @@ func (s *Sampler) StartSampling() {
 		}
 	}()
 }
+
+var DataSampler = Sampler{}
