@@ -95,6 +95,9 @@ func handleAutomatic() {
 }
 
 func computeOpeningWindow(temp float32) int {
-	// val := int((99*(temp-TOO_HOT_TEMP))/(HOT_TEMP-TOO_HOT_TEMP) + 1)
-	return 50
+	perc := int((99 * temp / (TOO_HOT_TEMP - HOT_TEMP)) - (99 * HOT_TEMP / (TOO_HOT_TEMP - HOT_TEMP)) + 1)
+	if perc < 0 {
+		return 0
+	}
+	return perc
 }
