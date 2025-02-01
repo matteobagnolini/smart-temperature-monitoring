@@ -11,6 +11,8 @@ type SerialConnection struct {
 	port serial.Port
 }
 
+var SerialConn *SerialConnection
+
 var SerialChannel = make(chan string)
 
 func OpenSerial(portName string, baudRate int) (*SerialConnection, error) {
@@ -44,7 +46,7 @@ func (s *SerialConnection) Read() {
 }
 
 func (s *SerialConnection) Write(msg string) {
-	_, err := s.port.Write([]byte(msg))
+	_, err := s.port.Write([]byte(msg + "\n"))
 	if err != nil {
 		log.Fatal(err)
 	}
