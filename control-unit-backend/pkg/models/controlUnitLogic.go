@@ -19,7 +19,6 @@ func StartSerialListener() {
 	go func() {
 		for msg := range serial.SerialChannel {
 			ParseMsg(msg)
-			fmt.Println(msg)
 		}
 	}()
 }
