@@ -4,9 +4,11 @@ import (
 	"sync"
 )
 
-const NORMAL_TEMP int = 18
-const HOT_TEMP int = 21
-const TOO_HOT_TEMP int = 24
+const NORMAL_TEMP float32 = 18.0
+const HOT_TEMP float32 = 21.0
+const TOO_HOT_TEMP float32 = 24.0
+
+const TOO_HOT_MAX_TIME_S int = 10
 
 type SystemState string
 
@@ -21,6 +23,7 @@ const (
 	NORMAL  TemperatureState = "NORMAL"
 	HOT     TemperatureState = "HOT"
 	TOO_HOT TemperatureState = "TOO_HOT"
+	ALARM   TemperatureState = "ALARM"
 )
 
 type StateMachine struct {
