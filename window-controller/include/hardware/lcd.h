@@ -12,6 +12,7 @@ class LCD : public UserLCD {
 public:
     LCD();
     void display(const char *msg);
+    void displayOnLines(int numOfLines, ...);
     void clear();
     void turnDisplayOn();
     void turnDisplayOff();

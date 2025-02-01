@@ -19,20 +19,18 @@ void WindowControllingTask::init(int period) {
 void WindowControllingTask::tick() {
     if (button->isPressed())
         changeState();
-    const  char *lcdMsg = prepareDisplayMsg();
 
     switch(state) {
         case AUTOMATIC:
-            lcd->display(lcdMsg);
             openWindowAutomatic();
         break;
 
         case MANUAL:
-            lcd->display(lcdMsg);
             openWindowManual();
         break;
 
     }
+    displayMsg();
 }
 
 void WindowControllingTask::changeState() {
@@ -60,10 +58,25 @@ void WindowControllingTask::openWindowAutomatic() {
     window->open(perc);
 }
 
-const char *WindowControllingTask::prepareDisplayMsg() {
+void WindowControllingTask::displayMsg() {
     float perc = controller->getCurrOpening();
-    const char *msg = "Window Level";
-    // TODO:
-    
-    return msg;
+    String windowLevelString = "Window: " + String(perc) + "%";
+    String stateString;
+    if (state == AUTOMATIC) {
+        stateString = "State: Automatic";
+        lcd->displayOnLines(
+                            2,
+                            windowLevelString.c_str(),
+                            stateString.c_str()
+        );
+    } else if (state == MANUAL) {
+        stateString = "State: Manual";
+        String tempString = "Temperature: " + String(controller->getCurrTemp());
+        lcd->displayOnLines(
+                            3,
+                            windowLevelString.c_str(),
+                            stateString.c_str(),
+                            tempString.c_str()
+        );
+    }
 }

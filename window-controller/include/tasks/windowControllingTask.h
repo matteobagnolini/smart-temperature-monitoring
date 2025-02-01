@@ -25,9 +25,10 @@ private:
 
     void changeState();
     void setState(windowState s);
-
+    
+private:
     void openWindowManual();
     void openWindowAutomatic();
-    const char *prepareDisplayMsg();
+    void displayMsg();
 
 };
