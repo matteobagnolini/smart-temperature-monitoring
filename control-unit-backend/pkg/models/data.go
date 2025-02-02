@@ -6,7 +6,7 @@ import (
 )
 
 const N_TEMP_MEASUREMENTS int = 50 // we keep track of last N measurements
-const PERIOD_MIN int = 5           // every period we produce a avg-min-max sample
+const PERIOD_MIN int = 1           // every period we produce a avg-min-max sample
 
 type Data struct {
 	Temp float32
@@ -21,9 +21,9 @@ type HistoryData struct {
 }
 
 type Sampler struct {
-	Datas        []Data
-	HistoryDatas []HistoryData
-	DatasBuffer  []Data
+	datas        []Data
+	historyDatas []HistoryData
+	datasBuffer  []Data
 	mu           sync.Mutex
 }
 
@@ -31,22 +31,40 @@ func (s *Sampler) AddData(temp float32, date string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	var data = Data{temp, date}
-	if len(s.Datas) < N_TEMP_MEASUREMENTS {
-		s.Datas = append(s.Datas, data)
+	if len(s.datas) < N_TEMP_MEASUREMENTS {
+		s.datas = append(s.datas, data)
 	} else {
-		s.Datas = s.Datas[1:] // remove the first element
-		s.Datas = append(s.Datas, data)
+		s.datas = s.datas[1:] // remove the first element
+		s.datas = append(s.datas, data)
 	}
-	s.DatasBuffer = append(s.DatasBuffer, data)
+	s.datasBuffer = append(s.datasBuffer, data)
 }
 
 func (s *Sampler) GetLastData() Data {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if len(s.Datas) == 0 {
-		return Data{0, ""}
+	if len(s.datas) == 0 {
+		return Data{-1, ""}
 	}
-	return s.Datas[len(s.Datas)-1]
+	return s.datas[len(s.datas)-1]
+}
+
+func (s *Sampler) GetDatas() []Data {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if len(s.datas) == 0 {
+		return []Data{{-1, ""}}
+	}
+	return s.datas
+}
+
+func (s *Sampler) GetLastHistoryData() HistoryData {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if len(s.historyDatas) == 0 {
+		return HistoryData{-1, -1, -1, ""}
+	}
+	return s.historyDatas[len(s.historyDatas)-1]
 }
 
 // Go subroutine that samples datas creating avg, min and max every PERIOD_MIN minutes
@@ -55,16 +73,16 @@ func (s *Sampler) StartSampling() {
 	go func() {
 		for range ticker.C {
 			s.mu.Lock()
-			if len(s.DatasBuffer) == 0 { // Sampler is empty
+			if len(s.datasBuffer) == 0 { // Sampler is empty
 				s.mu.Unlock()
 				continue
 			}
 
 			var sum, min, max float32
-			min = s.DatasBuffer[0].Temp
-			max = s.DatasBuffer[0].Temp
+			min = s.datasBuffer[0].Temp
+			max = s.datasBuffer[0].Temp
 
-			for _, d := range s.DatasBuffer {
+			for _, d := range s.datasBuffer {
 				sum += d.Temp
 				if d.Temp < min {
 					min = d.Temp
@@ -73,16 +91,16 @@ func (s *Sampler) StartSampling() {
 					max = d.Temp
 				}
 			}
-			avg := sum / float32(len(s.DatasBuffer))
+			avg := sum / float32(len(s.datasBuffer))
 			timestamp := time.Now().Format(time.RFC3339)
 
-			s.HistoryDatas = append(s.HistoryDatas, HistoryData{
+			s.historyDatas = append(s.historyDatas, HistoryData{
 				Avg:  avg,
 				Min:  min,
 				Max:  max,
 				Date: timestamp,
 			})
-			s.DatasBuffer = []Data{}
+			s.datasBuffer = []Data{}
 			s.mu.Unlock()
 		}
 	}()
