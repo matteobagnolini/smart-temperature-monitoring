@@ -68,25 +68,17 @@ func (s *StateMachine) SetTempState(state TemperatureState) {
 }
 
 func (s *StateMachine) SysState() SystemState {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 	return s.sysState
 }
 
 func (s *StateMachine) TempState() TemperatureState {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 	return s.tempState
 }
 
 func (s *StateMachine) LastTemp() float32 {
-	s.mu.Lock()
-	defer s.mu.Lock()
 	return s.lastTemp
 }
 
 func (s *StateMachine) WindowPercOpening() int {
-	s.mu.Lock()
-	defer s.mu.Lock()
 	return s.windPercOpening
 }
