@@ -1,6 +1,7 @@
 package serial
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -15,7 +16,14 @@ var SerialConn *SerialConnection
 
 var SerialChannel = make(chan string)
 
-func OpenSerial(portName string, baudRate int) (*SerialConnection, error) {
+func StartSerial(portName string, baudrate int) {
+	var err error = errors.New("init")
+	for err != nil {
+		SerialConn, err = openSerial(portName, baudrate)
+	}
+}
+
+func openSerial(portName string, baudRate int) (*SerialConnection, error) {
 	mode := &serial.Mode{
 		BaudRate: baudRate,
 	}

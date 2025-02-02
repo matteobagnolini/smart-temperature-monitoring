@@ -19,7 +19,7 @@ func main() {
 	mqtt.ConnectMQTT(BROKER_ADDR, TOPIC)
 	go models.StartMQTTListener()
 
-	serial.SerialConn, _ = serial.OpenSerial(SERIAL_PORT, BAUD_RATE)
+	serial.StartSerial(SERIAL_PORT, BAUD_RATE)
 
 	go serial.SerialConn.Read()
 
