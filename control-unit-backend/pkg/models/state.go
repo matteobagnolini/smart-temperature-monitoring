@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -47,6 +48,7 @@ func (s *StateMachine) SetWindPercOpening(perc int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.windPercOpening = perc
+	fmt.Printf("set window opening: %d\n", perc)
 }
 
 func (s *StateMachine) SetLastTemp(t float32) {

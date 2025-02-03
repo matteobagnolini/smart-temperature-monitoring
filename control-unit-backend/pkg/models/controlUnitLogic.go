@@ -52,6 +52,7 @@ func Tick() {
 
 func handleManual() {
 	serial.SerialConn.Write(TemperatureMsg(System.lastTemp))
+	fmt.Println("man opening: " + strconv.Itoa(System.windPercOpening))
 }
 
 var tooHotStartTime time.Time
@@ -59,7 +60,7 @@ var tooHotStartTime time.Time
 func handleAutomatic() {
 	switch System.tempState {
 	case NORMAL:
-		serial.SerialConn.Write(WindowOpeningMsg(WINDOW_CLOSE))
+		System.SetWindPercOpening(WINDOW_CLOSE)
 
 		if System.lastTemp > HOT_TEMP && System.lastTemp < TOO_HOT_TEMP {
 			System.SetTempState(HOT)
@@ -67,7 +68,7 @@ func handleAutomatic() {
 			fmt.Println("HOT")
 		}
 	case HOT:
-		serial.SerialConn.Write(WindowOpeningMsg(computeOpeningWindow(System.lastTemp)))
+		System.SetWindPercOpening(computeOpeningWindow(System.lastTemp))
 		if System.lastTemp > TOO_HOT_TEMP {
 			fmt.Println("TOO_HOT")
 			System.SetTempState(TOO_HOT)
@@ -78,9 +79,9 @@ func handleAutomatic() {
 			fmt.Println("NORMAL")
 			System.SetTempState(NORMAL)
 			mqtt.SendFrequencyMsg(strconv.Itoa(NORMAL_PERIOD))
-			serial.SerialConn.Write(WindowOpeningMsg(WINDOW_CLOSE))
 		}
 	case TOO_HOT:
+		System.SetWindPercOpening(WINDOW_OPEN)
 		if System.lastTemp < TOO_HOT_TEMP {
 			fmt.Println("HOT")
 			System.SetTempState(HOT)
@@ -90,8 +91,10 @@ func handleAutomatic() {
 			System.SetTempState(ALARM)
 		}
 	case ALARM:
+		System.SetWindPercOpening(WINDOW_OPEN)
 		fmt.Println("ALARM")
 	}
+	serial.SerialConn.Write(WindowOpeningMsg(System.windPercOpening))
 }
 
 func computeOpeningWindow(temp float32) int {

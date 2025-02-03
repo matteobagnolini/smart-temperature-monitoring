@@ -10,11 +10,18 @@ import (
 	"net/http"
 )
 
+func enableCors(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
 // We want to responde to both GET and POST on /api/data.
 // GET should be used to get the N measurements.
 // POST should be used to communicate the opening of the window when dashboard goes MANUAL mode.
 
 func handleDataRequest(w http.ResponseWriter, r *http.Request) {
+	enableCors(w)
 	if r.Method == "GET" {
 		handleGetData(w)
 	} else if r.Method == "POST" {
