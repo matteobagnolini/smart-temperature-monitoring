@@ -40,7 +40,7 @@ public:
   /* note: message deallocation is responsibility of the client */
   Msg* receiveMsg(Pattern& pattern);
   
-  void sendMsg(const char *msg);
+  void sendMsg(const String &msg);
 
 };
 

@@ -29,7 +29,7 @@ void MsgServiceClass::init(){
   msgAvailable = false;  
 }
 
-void MsgServiceClass::sendMsg(const char *msg){
+void MsgServiceClass::sendMsg(const String &msg){
   Serial.println(msg);  
 }
 
