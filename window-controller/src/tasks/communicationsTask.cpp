@@ -34,7 +34,8 @@ void CommunicationsTask::tick() {
         if (msg->getContent().substring(0,2) == TEMP_PREF) {
             controller->setCurrTemp(msg->getContent().substring(3,7).toFloat());
         }
-        // TODO: need to send window opening
+        const String windowOpeningMsg = (WINDOW_PREF + String(":") + String(controller->getCurrOpening()));
+        MsgService.sendMsg(windowOpeningMsg);
         delete msg;
     }
     // display_freeram();
