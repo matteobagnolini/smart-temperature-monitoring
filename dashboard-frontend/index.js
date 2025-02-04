@@ -1,15 +1,16 @@
+const DATA_ADDRESS = "http://localhost:3333/api/data"
+const RESOLVE_ALARM_ADDRESS = "http://localhost:3333/api/resolve-alarm"
+
 let temperatureChart;
 let tempData = [];
 
 async function fetchTemperatureData() {
     try {
-        const response = await fetch("http://localhost:3333/api/data");
+        const response = await fetch(DATA_ADDRESS);
         const data = await response.json();
 
-        // Aggiorna il grafico
         updateChart(data.Temps);
 
-        // Aggiorna i valori nella sezione info
         document.getElementById("avgTemp").innerText = data.Avg.toFixed(2);
         document.getElementById("maxTemp").innerText = data.Max.toFixed(2);
         document.getElementById("minTemp").innerText = data.Min.toFixed(2);
@@ -51,8 +52,8 @@ function createChart() {
                     title: { display: true, text: "Time" }
                 },
                 y: {
-                    suggestedMin: 15,  // Limite inferiore 10°C
-                    suggestedMax: 25,  // Limite superiore 30°C
+                    suggestedMin: 15,
+                    suggestedMax: 25,
                     title: { display: true, text: "Temperature (°C)" }
                 }
             }
@@ -61,13 +62,12 @@ function createChart() {
 }
 
 function resolveAlarm() {
-    fetch("http://localhost:3333/api/resolve-alarm", {
+    fetch(RESOLVE_ALARM_ADDRESS, {
         method: "POST",
     }).then(() => {
         alert("Alarm resolved!");
     }).catch(error => console.error("Error resolving alarm:", error));
 }
 
-// Creazione del grafico e aggiornamento automatico ogni 2 secondi
 createChart();
 setInterval(fetchTemperatureData, 250);
