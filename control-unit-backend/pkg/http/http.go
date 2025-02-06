@@ -67,7 +67,7 @@ func handleDashboardWindowOpeningRequest(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	models.System.SetWindPercOpening(windowOpeningFromDashboard.windowOpeningPerc)
+	models.System.SetWindPercOpening(windowOpeningFromDashboard.WindowOpeningPerc)
 }
 
 func handleAutoStateRequest(w http.ResponseWriter, r *http.Request) {

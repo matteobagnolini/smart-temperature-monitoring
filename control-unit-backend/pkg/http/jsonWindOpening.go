@@ -1,5 +1,5 @@
 package http
 
 type WindowOpening struct {
-	windowOpeningPerc int
+	WindowOpeningPerc int
 }
