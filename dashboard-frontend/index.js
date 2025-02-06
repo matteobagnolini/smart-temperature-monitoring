@@ -1,5 +1,10 @@
-const DATA_ADDRESS = "http://localhost:3333/api/data"
-const RESOLVE_ALARM_ADDRESS = "http://localhost:3333/api/resolve-alarm"
+const PORT = "3333"
+const BASE_ADDRESS = "http://localhost:" + PORT
+const DATA_ADDRESS = BASE_ADDRESS + "/api/data"
+const RESOLVE_ALARM_ADDRESS = BASE_ADDRESS + "/api/resolve-alarm"
+const MANUAL_STATE_ADDRESS = BASE_ADDRESS + "/api/manual-state"
+const AUTO_STATE_ADDRESS = BASE_ADDRESS + "/api/auto-state"
+const WINDOW_OPENING_ADDRESS = BASE_ADDRESS + "/api/window-opening"
 
 let temperatureChart;
 let tempData = [];
