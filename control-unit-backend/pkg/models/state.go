@@ -14,8 +14,9 @@ const TOO_HOT_MAX_TIME_S int = 10
 type SystemState string
 
 const (
-	AUTOMATIC SystemState = "AUTOMATIC"
-	MANUAL    SystemState = "MANUAL"
+	AUTOMATIC        SystemState = "AUTOMATIC"
+	MANUAL           SystemState = "MANUAL"
+	DASHBOARD_MANUAL SystemState = "DASHBOARD_MANUAL"
 )
 
 type TemperatureState string

@@ -10,6 +10,7 @@ import (
 const dataAddress = "/api/data"
 const resolveAlarmAddress = "/api/resolve-alarm"
 const manualStateAddress = "/api/manual-state"
+const autoStateAddress = "/api/auto-state"
 const dashboardWindowOpeningAddress = "/api/window-opening"
 
 func enableCors(w http.ResponseWriter) {
@@ -53,17 +54,33 @@ func handleResolveAlarmRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleManualStateRequest(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	// system goes to dashboard manual only if it is currently in automatic
+	// It can't go from (arduino) MANUAL to DASHBOARD_MANUAL
+	if models.System.SysState() == models.SystemState(models.AUTOMATIC) {
+		models.System.SetSysState(models.SystemState(models.DASHBOARD_MANUAL))
+	}
 }
 
 func handleDashboardWindowOpeningRequest(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	var windowOpeningFromDashboard WindowOpening
+	err := json.NewDecoder(r.Body).Decode(&windowOpeningFromDashboard)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	models.System.SetWindPercOpening(windowOpeningFromDashboard.windowOpeningPerc)
+}
+
+func handleAutoStateRequest(w http.ResponseWriter, r *http.Request) {
+	if models.System.SysState() == models.SystemState(models.DASHBOARD_MANUAL) {
+		models.System.SetSysState(models.SystemState(models.AUTOMATIC))
+	}
 }
 
 func StartHttpServer(addres string, port string) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(dataAddress, handleDataRequest)
 	mux.HandleFunc(resolveAlarmAddress, handleResolveAlarmRequest)
+	mux.HandleFunc(autoStateAddress, handleAutoStateRequest)
 	mux.HandleFunc(manualStateAddress, handleManualStateRequest)
 	mux.HandleFunc(dashboardWindowOpeningAddress, handleDashboardWindowOpeningRequest)
 

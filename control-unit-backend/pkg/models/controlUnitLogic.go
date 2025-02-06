@@ -46,6 +46,8 @@ func Tick() {
 			handleAutomatic()
 		case MANUAL:
 			handleManual()
+		case DASHBOARD_MANUAL:
+			handleDashboardManual()
 		}
 	}
 }
@@ -94,6 +96,11 @@ func handleAutomatic() {
 		System.SetWindPercOpening(WINDOW_OPEN)
 		fmt.Println("ALARM")
 	}
+	serial.SerialConn.Write(WindowOpeningMsg(System.windPercOpening))
+}
+
+func handleDashboardManual() {
+	// Window opening is set by the value the frontend sent previously
 	serial.SerialConn.Write(WindowOpeningMsg(System.windPercOpening))
 }
 
