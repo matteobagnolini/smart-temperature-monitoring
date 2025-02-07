@@ -1,6 +1,7 @@
 package main
 
 import (
+	"control-unit-backend/pkg/db"
 	"control-unit-backend/pkg/http"
 	"control-unit-backend/pkg/models"
 	"control-unit-backend/pkg/mqtt"
@@ -17,6 +18,8 @@ const SERIAL_PORT = "/dev/cu.usbserial-14120"
 const BAUD_RATE = 9600
 
 func main() {
+
+	db.InitDb()
 
 	models.DataSampler.StartSampling() // start sampling subroutine
 

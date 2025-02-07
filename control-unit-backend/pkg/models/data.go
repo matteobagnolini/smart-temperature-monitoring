@@ -1,6 +1,7 @@
 package models
 
 import (
+	"control-unit-backend/pkg/db"
 	"sync"
 	"time"
 )
@@ -21,10 +22,10 @@ type HistoryData struct {
 }
 
 type Sampler struct {
-	datas        []Data
-	historyDatas []HistoryData
-	datasBuffer  []Data
-	mu           sync.Mutex
+	datas           []Data
+	lastHistoryData HistoryData // lat history data is cached
+	datasBuffer     []Data
+	mu              sync.Mutex
 }
 
 func (s *Sampler) AddData(temp float32, date string) {
@@ -61,14 +62,23 @@ func (s *Sampler) GetDatas() []Data {
 func (s *Sampler) GetLastHistoryData() HistoryData {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if len(s.historyDatas) == 0 {
-		return HistoryData{-1, -1, -1, ""}
-	}
-	return s.historyDatas[len(s.historyDatas)-1]
+	return s.lastHistoryData
 }
 
 func (s *Sampler) GetHistoryDatas() []HistoryData {
-	return s.historyDatas
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var datas []db.Dbdata = db.GetAllDatas()
+	var historyDatas []HistoryData
+	for _, data := range datas {
+		historyDatas = append(historyDatas, HistoryData{
+			data.Avg,
+			data.Min,
+			data.Max,
+			data.Date,
+		})
+	}
+	return historyDatas
 }
 
 // Go subroutine that samples datas creating avg, min and max every PERIOD_MIN minutes
@@ -98,12 +108,14 @@ func (s *Sampler) StartSampling() {
 			avg := sum / float32(len(s.datasBuffer))
 			timestamp := time.Now().Format(time.ANSIC)
 
-			s.historyDatas = append(s.historyDatas, HistoryData{
+			s.lastHistoryData = HistoryData{
 				Avg:  avg,
 				Min:  min,
 				Max:  max,
 				Date: timestamp,
-			})
+			}
+			db.AddData(avg, min, max, timestamp)
+
 			s.datasBuffer = []Data{}
 			s.mu.Unlock()
 		}
