@@ -69,6 +69,12 @@ func handleAutomatic() {
 			mqtt.SendFrequencyMsg(strconv.Itoa(HOT_PERIOD))
 			fmt.Println("HOT")
 		}
+		if System.lastTemp > TOO_HOT_TEMP {
+			System.SetTempState(TOO_HOT)
+			mqtt.SendFrequencyMsg(strconv.Itoa(TOO_HOT_PERIOD))
+			fmt.Println("TOO_HOT")
+			tooHotStartTime = time.Now()
+		}
 	case HOT:
 		System.SetWindPercOpening(computeOpeningWindow(System.lastTemp))
 		if System.lastTemp > TOO_HOT_TEMP {
@@ -108,6 +114,9 @@ func computeOpeningWindow(temp float32) int {
 	perc := int((99 * temp / (TOO_HOT_TEMP - HOT_TEMP)) - (99 * HOT_TEMP / (TOO_HOT_TEMP - HOT_TEMP)) + 1)
 	if perc < 0 {
 		return 0
+	}
+	if perc > 100 {
+		return 100
 	}
 	return perc
 }
