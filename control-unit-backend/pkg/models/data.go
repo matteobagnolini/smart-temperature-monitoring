@@ -67,6 +67,10 @@ func (s *Sampler) GetLastHistoryData() HistoryData {
 	return s.historyDatas[len(s.historyDatas)-1]
 }
 
+func (s *Sampler) GetHistoryDatas() []HistoryData {
+	return s.historyDatas
+}
+
 // Go subroutine that samples datas creating avg, min and max every PERIOD_MIN minutes
 func (s *Sampler) StartSampling() {
 	ticker := time.NewTicker(time.Duration(PERIOD_MIN) * time.Minute)
@@ -92,7 +96,7 @@ func (s *Sampler) StartSampling() {
 				}
 			}
 			avg := sum / float32(len(s.datasBuffer))
-			timestamp := time.Now().Format(time.RFC3339)
+			timestamp := time.Now().Format(time.ANSIC)
 
 			s.historyDatas = append(s.historyDatas, HistoryData{
 				Avg:  avg,

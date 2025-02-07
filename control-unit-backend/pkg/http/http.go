@@ -13,6 +13,7 @@ const resolveAlarmAddress = "/api/resolve-alarm"
 const manualStateAddress = "/api/manual-state"
 const autoStateAddress = "/api/auto-state"
 const dashboardWindowOpeningAddress = "/api/window-opening"
+const historyDataAddress = "/api/history"
 
 func enableCors(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -68,12 +69,10 @@ func handleManualStateRequest(w http.ResponseWriter, r *http.Request) {
 	if models.System.SysState() == models.SystemState(models.AUTOMATIC) {
 		models.System.SetSysState(models.SystemState(models.DASHBOARD_MANUAL))
 	}
-	fmt.Println("recv manual state req")
 }
 
 func handleDashboardWindowOpeningRequest(w http.ResponseWriter, r *http.Request) {
 	enableCors(w, r)
-	fmt.Println("recv window opening from dashboard")
 	var windowOpeningFromDashboard WindowOpening
 	err := json.NewDecoder(r.Body).Decode(&windowOpeningFromDashboard)
 	if err != nil {
@@ -90,6 +89,17 @@ func handleAutoStateRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleHistoryDataRequest(w http.ResponseWriter, r *http.Request) {
+	enableCors(w, r)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	err := json.NewEncoder(w).Encode(models.DataSampler.GetHistoryDatas())
+	fmt.Println("sending history")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func StartHttpServer(addres string, port string) {
 	mux := http.NewServeMux()
 	mux.HandleFunc(dataAddress, handleDataRequest)
@@ -97,6 +107,7 @@ func StartHttpServer(addres string, port string) {
 	mux.HandleFunc(autoStateAddress, handleAutoStateRequest)
 	mux.HandleFunc(manualStateAddress, handleManualStateRequest)
 	mux.HandleFunc(dashboardWindowOpeningAddress, handleDashboardWindowOpeningRequest)
+	mux.HandleFunc(historyDataAddress, handleHistoryDataRequest)
 
 	server := &http.Server{
 		Addr:    addres + ":" + port,

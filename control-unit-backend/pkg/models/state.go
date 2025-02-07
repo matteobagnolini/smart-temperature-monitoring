@@ -4,9 +4,9 @@ import (
 	"sync"
 )
 
-const NORMAL_TEMP float32 = 15.0
-const HOT_TEMP float32 = 17.0
-const TOO_HOT_TEMP float32 = 18.0
+const NORMAL_TEMP float32 = 18.0
+const HOT_TEMP float32 = 20.5
+const TOO_HOT_TEMP float32 = 21.5
 
 const TOO_HOT_MAX_TIME_S int = 10
 
