@@ -23,7 +23,7 @@ type HistoryData struct {
 
 type Sampler struct {
 	datas           []Data
-	lastHistoryData HistoryData // lat history data is cached
+	lastHistoryData HistoryData // last history data is cached
 	datasBuffer     []Data
 	mu              sync.Mutex
 }
