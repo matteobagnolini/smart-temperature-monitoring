@@ -1,13 +1,12 @@
 package models
 
 import (
-	"fmt"
 	"sync"
 )
 
-const NORMAL_TEMP float32 = 18.0
-const HOT_TEMP float32 = 21.0
-const TOO_HOT_TEMP float32 = 24.0
+const NORMAL_TEMP float32 = 15.0
+const HOT_TEMP float32 = 17.0
+const TOO_HOT_TEMP float32 = 18.0
 
 const TOO_HOT_MAX_TIME_S int = 10
 
@@ -49,7 +48,6 @@ func (s *StateMachine) SetWindPercOpening(perc int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.windPercOpening = perc
-	fmt.Printf("set window opening: %d\n", perc)
 }
 
 func (s *StateMachine) SetLastTemp(t float32) {

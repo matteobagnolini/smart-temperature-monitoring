@@ -54,7 +54,6 @@ func Tick() {
 
 func handleManual() {
 	serial.SerialConn.Write(TemperatureMsg(System.lastTemp))
-	fmt.Println("man opening: " + strconv.Itoa(System.windPercOpening))
 }
 
 var tooHotStartTime time.Time

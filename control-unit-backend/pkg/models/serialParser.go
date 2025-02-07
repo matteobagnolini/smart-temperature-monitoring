@@ -23,7 +23,6 @@ func ParseMsg(msg string) {
 	switch pref {
 	case WINDOW_PREF:
 		perc, _ := strconv.Atoi(msg[3:5])
-		fmt.Printf("window value recv: %d\n", perc)
 		System.SetWindPercOpening(perc)
 		fmt.Println(System.WindowPercOpening())
 	case STATE_PREF:
