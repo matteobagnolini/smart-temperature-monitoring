@@ -50,7 +50,9 @@ func handleGetData(w http.ResponseWriter) {
 }
 
 func handleResolveAlarmRequest(w http.ResponseWriter, r *http.Request) {
-	models.System.SetSysState(models.SystemState(models.NORMAL))
+	if models.System.TempState() == models.TemperatureState(models.ALARM) {
+		models.System.SetTempState(models.TemperatureState(models.NORMAL))
+	}
 }
 
 func handleManualStateRequest(w http.ResponseWriter, r *http.Request) {
