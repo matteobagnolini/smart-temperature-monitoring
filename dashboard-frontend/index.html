@@ -24,7 +24,20 @@
             <p class="info-item"><strong>Current State:</strong> <span id="currState">-</span></p>
             <p class="info-item"><strong>Window Opening:</strong> <span id="windowPerc">-</span>%</p>
 
-            <button onclick="resolveAlarm()">Resolve ALARM</button>
+            <button id="resolveAlarmBtn" onclick="resolveAlarm()" disabled>Resolve ALARM</button>
+            <label for="modeSelector">Select Mode:</label>
+            <select id="modeSelector">
+                <option value="AUTO" selected>Automatic</option>
+                <option value="MANUAL">Manual</option>
+            </select>
+
+<!-- Wrapper per lo slider, inizialmente nascosto -->
+            <div id="manualControls" style="display: none;">
+                <label for="windowSlider">Window Opening (%):</label>
+                <input type="range" id="windowSlider" min="0" max="100" value="50" step="5">
+                <span id="windowValue">50%</span>
+                <button id="setWindowBtn">Set Opening</button>
+            </div>
         </div>
     </div>
 

@@ -22,6 +22,14 @@ async function fetchTemperatureData() {
         document.getElementById("currState").innerText = data.CurrState;
         document.getElementById("windowPerc").innerText = data.WindowOpeningPerc;
 
+        // Button is disabled if state != ALARM
+        const alarmBtn = document.getElementById("resolveAlarmBtn");
+        if (data.CurrState === "ALARM") {
+            alarmBtn.disabled = false;
+        } else {
+            alarmBtn.disabled = true;
+        }
+
     } catch (error) {
         console.error("Error fetching data:", error);
     }
@@ -73,6 +81,51 @@ function resolveAlarm() {
         alert("Alarm resolved!");
     }).catch(error => console.error("Error resolving alarm:", error));
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modeSelector = document.getElementById("modeSelector");
+
+    modeSelector.addEventListener("change", function () {
+        const selectedMode = modeSelector.value;
+        const url = selectedMode === "MANUAL"
+            ? MANUAL_STATE_ADDRESS
+            : AUTO_STATE_ADDRESS;
+
+        fetch(url, { method: "POST" })
+            .then(() => console.log(`Mode changed to: ${selectedMode}`))
+            .catch(error => console.error("Error changing mode:", error));
+    });
+
+    // Display or hide slider for controlling window opening
+    modeSelector.addEventListener("change", function () {
+        if (modeSelector.value === "MANUAL") {
+            manualControls.style.display = "block";
+        } else {
+            manualControls.style.display = "none";
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const slider = document.getElementById("windowSlider");
+    const windowValue = document.getElementById("windowValue");
+    const setWindowBtn = document.getElementById("setWindowBtn");
+
+    slider.addEventListener("input", function () {
+        windowValue.textContent = slider.value + "%";
+    });
+
+    setWindowBtn.addEventListener("click", function () {
+        const percentage = parseInt(slider.value);
+        fetch(WINDOW_OPENING_ADDRESS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ WindowOpeningPerc: percentage }),
+        })
+        .then(() => console.log(`Window opening set to: ${percentage}%`))
+        .catch(error => console.error("Error setting window opening:", error));
+    });
+});
 
 createChart();
 setInterval(fetchTemperatureData, 250);
