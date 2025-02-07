@@ -3,6 +3,7 @@ package http
 import (
 	"control-unit-backend/pkg/models"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -13,14 +14,18 @@ const manualStateAddress = "/api/manual-state"
 const autoStateAddress = "/api/auto-state"
 const dashboardWindowOpeningAddress = "/api/window-opening"
 
-func enableCors(w http.ResponseWriter) {
+func enableCors(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 }
 
 func handleDataRequest(w http.ResponseWriter, r *http.Request) {
-	enableCors(w)
+	enableCors(w, r)
 	if r.Method == "GET" {
 		handleGetData(w)
 	}
@@ -50,6 +55,7 @@ func handleGetData(w http.ResponseWriter) {
 }
 
 func handleResolveAlarmRequest(w http.ResponseWriter, r *http.Request) {
+	enableCors(w, r)
 	if models.System.TempState() == models.TemperatureState(models.ALARM) {
 		models.System.SetTempState(models.TemperatureState(models.NORMAL))
 	}
@@ -58,21 +64,27 @@ func handleResolveAlarmRequest(w http.ResponseWriter, r *http.Request) {
 func handleManualStateRequest(w http.ResponseWriter, r *http.Request) {
 	// system goes to dashboard manual only if it is currently in automatic
 	// It can't go from (arduino) MANUAL to DASHBOARD_MANUAL
+	enableCors(w, r)
 	if models.System.SysState() == models.SystemState(models.AUTOMATIC) {
 		models.System.SetSysState(models.SystemState(models.DASHBOARD_MANUAL))
 	}
+	fmt.Println("recv manual state req")
 }
 
 func handleDashboardWindowOpeningRequest(w http.ResponseWriter, r *http.Request) {
+	enableCors(w, r)
+	fmt.Println("recv window opening from dashboard")
 	var windowOpeningFromDashboard WindowOpening
 	err := json.NewDecoder(r.Body).Decode(&windowOpeningFromDashboard)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
+	fmt.Printf("recv %d \n", windowOpeningFromDashboard.WindowOpeningPerc)
 	models.System.SetWindPercOpening(windowOpeningFromDashboard.WindowOpeningPerc)
 }
 
 func handleAutoStateRequest(w http.ResponseWriter, r *http.Request) {
+	enableCors(w, r)
 	if models.System.SysState() == models.SystemState(models.DASHBOARD_MANUAL) {
 		models.System.SetSysState(models.SystemState(models.AUTOMATIC))
 	}
