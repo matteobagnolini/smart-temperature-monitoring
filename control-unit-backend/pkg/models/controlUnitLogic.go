@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const TASK_PERIOD_MILLIS = 250
+
 const WINDOW_CLOSE = 0
 const WINDOW_OPEN = 100
 
@@ -37,7 +39,7 @@ func processMQTTMessage(msg string) {
 }
 
 func Tick() {
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(TASK_PERIOD_MILLIS * time.Millisecond)
 	defer ticker.Stop()
 	for range ticker.C {
 		System.SetLastTemp(DataSampler.GetLastData().Temp)
