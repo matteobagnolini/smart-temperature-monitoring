@@ -11,9 +11,9 @@ void CommunicationsTask::init(int period) {
 
 void CommunicationsTask::tick() {
     if (controller->isStateAutomatic())  // AUTOMATIC State
-        handleAutomatic()
+        handleAutomatic();
     else if (controller->isStateManual())    // MANUAL State
-        handleManual()
+        handleManual();
 };
 
 void CommunicationsTask::handleAutomatic() {
