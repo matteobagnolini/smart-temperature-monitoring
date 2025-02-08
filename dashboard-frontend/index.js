@@ -62,7 +62,7 @@ function createChart() {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    title: { display: true, text: "Time" }
+                    title: { display: true }
                 },
                 y: {
                     suggestedMin: 15,
