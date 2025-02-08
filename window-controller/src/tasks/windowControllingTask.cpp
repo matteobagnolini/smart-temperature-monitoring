@@ -54,12 +54,12 @@ void WindowControllingTask::openWindowManual() {
 }
 
 void WindowControllingTask::openWindowAutomatic() {
-    float perc = controller->getCurrOpening();
+    int perc = controller->getCurrOpening();
     window->open(perc);
 }
 
 void WindowControllingTask::displayMsg() {
-    float perc = controller->getCurrOpening();
+    int perc = controller->getCurrOpening();
     String windowLevelString = "Window: " + String(perc) + "%";
     String stateString;
     if (state == AUTOMATIC) {

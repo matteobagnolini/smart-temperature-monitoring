@@ -12,7 +12,7 @@ public:
 private:
     Controller *controller;
 
-    void sendCurrentStates();
-    void receiveUpdatedStates();
+    void handleManual();
+    void handleAutomatic();
 
 };

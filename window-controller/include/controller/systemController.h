@@ -12,7 +12,7 @@ public:
     void setCurrTemp(float temp);
     float getCurrTemp();
     void setCurrOpening(int perc);
-    int getCurrOpening(); // TODO: change this name in smtg like getOpeningFromControlUnit()
+    int getCurrOpening();
     void setStateManual();
     void setStateAutomatic();
     bool isStateManual();
