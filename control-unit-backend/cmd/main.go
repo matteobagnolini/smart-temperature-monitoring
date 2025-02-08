@@ -12,7 +12,8 @@ const SERVER_IP_ADDR = ""
 const WEB_PORT = "3333"
 
 const BROKER_ADDR = "broker.mqtt-dashboard.com:1883"
-const TOPIC = "smart-temp/esp32/temp"
+const SUB_TOPIC = "smart-temp/esp32/temp"
+const PUB_TOPIC = "smart-temp/esp32/period"
 
 const SERIAL_PORT = "/dev/cu.usbserial-14120"
 const BAUD_RATE = 9600
@@ -21,11 +22,10 @@ func main() {
 
 	db.InitDb()
 
-	models.DataSampler.StartSampling() // start sampling subroutine
-
+	models.DataSampler.StartSampling()
 	http.StartHttpServer("", "3333")
 
-	mqtt.ConnectMQTT(BROKER_ADDR, TOPIC)
+	mqtt.ConnectMQTT(BROKER_ADDR, SUB_TOPIC, PUB_TOPIC)
 	go models.StartMQTTListener()
 
 	serial.StartSerial(SERIAL_PORT, BAUD_RATE)

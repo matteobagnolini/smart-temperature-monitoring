@@ -11,9 +11,9 @@ import (
 const WINDOW_CLOSE = 0
 const WINDOW_OPEN = 100
 
-const NORMAL_PERIOD = 1000
-const HOT_PERIOD = 800
-const TOO_HOT_PERIOD = 500
+const NORMAL_T_PERIOD = 1000
+const HOT_T_PERIOD = 800
+const TOO_HOT_T_PERIOD = 500
 
 func StartSerialListener() {
 	go func() {
@@ -62,15 +62,14 @@ func handleAutomatic() {
 	switch System.tempState {
 	case NORMAL:
 		System.SetWindPercOpening(WINDOW_CLOSE)
-
 		if System.lastTemp > HOT_TEMP && System.lastTemp < TOO_HOT_TEMP {
 			System.SetTempState(HOT)
-			mqtt.SendFrequencyMsg(strconv.Itoa(HOT_PERIOD))
+			mqtt.SendFrequencyMsg(strconv.Itoa(HOT_T_PERIOD))
 			fmt.Println("HOT")
 		}
 		if System.lastTemp > TOO_HOT_TEMP {
 			System.SetTempState(TOO_HOT)
-			mqtt.SendFrequencyMsg(strconv.Itoa(TOO_HOT_PERIOD))
+			mqtt.SendFrequencyMsg(strconv.Itoa(TOO_HOT_T_PERIOD))
 			fmt.Println("TOO_HOT")
 			tooHotStartTime = time.Now()
 		}
@@ -79,33 +78,38 @@ func handleAutomatic() {
 		if System.lastTemp > TOO_HOT_TEMP {
 			fmt.Println("TOO_HOT")
 			System.SetTempState(TOO_HOT)
-			mqtt.SendFrequencyMsg(strconv.Itoa(TOO_HOT_PERIOD))
+			mqtt.SendFrequencyMsg(strconv.Itoa(TOO_HOT_T_PERIOD))
 			tooHotStartTime = time.Now()
 		}
 		if System.lastTemp < HOT_TEMP {
 			fmt.Println("NORMAL")
 			System.SetTempState(NORMAL)
-			mqtt.SendFrequencyMsg(strconv.Itoa(NORMAL_PERIOD))
+			mqtt.SendFrequencyMsg(strconv.Itoa(NORMAL_T_PERIOD))
 		}
 	case TOO_HOT:
 		System.SetWindPercOpening(WINDOW_OPEN)
 		if System.lastTemp < TOO_HOT_TEMP {
 			fmt.Println("HOT")
 			System.SetTempState(HOT)
-			mqtt.SendFrequencyMsg(strconv.Itoa(HOT_PERIOD))
+			mqtt.SendFrequencyMsg(strconv.Itoa(HOT_T_PERIOD))
 		}
 		if time.Since(tooHotStartTime) > time.Duration(TOO_HOT_MAX_TIME_S)*time.Second {
 			System.SetTempState(ALARM)
+			System.alarmOk = false
+			fmt.Println("ALARM")
 		}
 	case ALARM:
 		System.SetWindPercOpening(WINDOW_OPEN)
-		fmt.Println("ALARM")
+		if System.alarmOk {
+			fmt.Println("NORMAL")
+			System.SetTempState(NORMAL)
+			mqtt.SendFrequencyMsg(strconv.Itoa(NORMAL_T_PERIOD))
+		}
 	}
 	serial.SerialConn.Write(WindowOpeningMsg(System.windPercOpening))
 }
 
 func handleDashboardManual() {
-	// Window opening is set by the value the frontend sent previously
 	serial.SerialConn.Write(WindowOpeningMsg(System.windPercOpening))
 }
 

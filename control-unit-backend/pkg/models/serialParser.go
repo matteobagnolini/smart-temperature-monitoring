@@ -24,7 +24,6 @@ func ParseMsg(msg string) {
 	case WINDOW_PREF:
 		perc, _ := strconv.Atoi(msg[3:5])
 		System.SetWindPercOpening(perc)
-		fmt.Println(System.WindowPercOpening())
 	case STATE_PREF:
 		if value == STATE_AUTO {
 			System.SetSysState(AUTOMATIC)

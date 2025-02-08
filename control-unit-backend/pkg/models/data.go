@@ -28,6 +28,8 @@ type Sampler struct {
 	mu              sync.Mutex
 }
 
+var DataSampler = Sampler{}
+
 func (s *Sampler) AddData(temp float32, date string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -121,5 +123,3 @@ func (s *Sampler) StartSampling() {
 		}
 	}()
 }
-
-var DataSampler = Sampler{}

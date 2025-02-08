@@ -10,8 +10,9 @@ import (
 var TempChannel = make(chan string)
 
 var client MQTT.Client
+var pubTopic string
 
-func ConnectMQTT(broker string, topic string) {
+func ConnectMQTT(broker string, subscribeTopic string, publishTopic string) {
 	opts := MQTT.NewClientOptions()
 	opts.AddBroker(broker)
 	opts.SetClientID("control-unit-backend")
@@ -22,9 +23,18 @@ func ConnectMQTT(broker string, topic string) {
 		log.Fatal(token.Error())
 	}
 
-	client.Subscribe(topic, 1, temperatureMessageHandler)
+	client.Subscribe(subscribeTopic, 1, temperatureMessageHandler)
+	pubTopic = publishTopic
 
 	fmt.Println("Connected to MQTT")
+}
+
+func SendFrequencyMsg(msg string) {
+	sendMsg(pubTopic, msg)
+}
+
+func sendMsg(topic string, msg string) {
+	client.Publish(topic, 1, false, msg)
 }
 
 func defaultMessageHandler(client MQTT.Client, msg MQTT.Message) {
@@ -32,17 +42,6 @@ func defaultMessageHandler(client MQTT.Client, msg MQTT.Message) {
 }
 
 func temperatureMessageHandler(client MQTT.Client, msg MQTT.Message) {
-	// fmt.Printf("Received temperature: %s from Topic\n", msg.Payload())
 	temp := string(msg.Payload())
-	// temp, _ := strconv.ParseFloat(string(msg.Payload()), 32)
-	// models.DataSampler.AddData(float32(temp), time.Now().Format(time.RFC3339)) // Add data to sampler
 	TempChannel <- temp
-}
-
-func SendMsg(topic string, msg string) {
-	client.Publish(topic, 1, false, msg)
-}
-
-func SendFrequencyMsg(msg string) {
-	SendMsg("smart-temp/esp32/period", msg)
 }

@@ -7,21 +7,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const addSttm = `
-				 insert into HistoryData(avg, min, max, date)
-				 values(?, ?, ?, ?);
-				`
+const dbPath = "./historytemp.db"
 
-var db *sql.DB
-
-func InitDb() {
-	var err error
-	db, err = sql.Open("sqlite3", "./historytemp.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	sqlSttm := `
+const createHistDataSttm = `
 				create table if not exists HistoryData (
 					id integer not null primary key autoincrement,
 					avg real,
@@ -30,6 +18,22 @@ func InitDb() {
 					date text
 					);
 				`
+const addSttm = `
+				 insert into HistoryData(avg, min, max, date)
+				 values(?, ?, ?, ?);
+				`
+const getDataSttm = "select avg, min, max, date from HistoryData"
+
+var db *sql.DB
+
+func InitDb() {
+	var err error
+	db, err = sql.Open("sqlite3", dbPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sqlSttm := createHistDataSttm
 
 	_, err = db.Exec(sqlSttm)
 	if err != nil {
@@ -52,7 +56,7 @@ type Dbdata struct {
 }
 
 func GetAllDatas() []Dbdata {
-	rows, err := db.Query("select avg, min, max, date from HistoryData")
+	rows, err := db.Query(getDataSttm)
 	if err != nil {
 		log.Fatal(err)
 	}

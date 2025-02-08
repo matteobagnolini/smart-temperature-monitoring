@@ -17,7 +17,7 @@ var SerialConn *SerialConnection
 var SerialChannel = make(chan string)
 
 func StartSerial(portName string, baudrate int) {
-	var err error = errors.New("init")
+	err := errors.New("init")
 	for err != nil {
 		SerialConn, err = openSerial(portName, baudrate)
 	}

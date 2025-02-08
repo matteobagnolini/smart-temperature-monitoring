@@ -1,5 +1,5 @@
 package http
 
-type WindowOpening struct {
+type JsonWindowOpening struct {
 	WindowOpeningPerc int
 }

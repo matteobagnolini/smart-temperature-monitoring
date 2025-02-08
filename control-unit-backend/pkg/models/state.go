@@ -32,15 +32,16 @@ type StateMachine struct {
 	lastTemp        float32
 	sysState        SystemState
 	tempState       TemperatureState
+	alarmOk         bool
 	mu              sync.Mutex
 }
 
-// Singleton
 var System = StateMachine{
 	windPercOpening: 0,
 	lastTemp:        0.0,
 	sysState:        AUTOMATIC,
 	tempState:       NORMAL,
+	alarmOk:         true,
 }
 
 /* ====== Setters & Getters ======*/
@@ -82,4 +83,10 @@ func (s *StateMachine) LastTemp() float32 {
 
 func (s *StateMachine) WindowPercOpening() int {
 	return s.windPercOpening
+}
+
+func (s *StateMachine) ResolveAlarm() {
+	if s.tempState == TemperatureState(ALARM) && !s.alarmOk {
+		s.alarmOk = true
+	}
 }
