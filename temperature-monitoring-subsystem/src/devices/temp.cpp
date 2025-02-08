@@ -8,7 +8,7 @@ Temp::Temp(int pin) {
 
 float Temp::readTemp() {
     int reading = analogRead(this->pin);
-    float voltage = (reading) / 1023.0;
+    float voltage = (reading) * (3.3 / 4095.0);
     float tempC = (voltage - 0.5) * 100;
     return tempC;
 }

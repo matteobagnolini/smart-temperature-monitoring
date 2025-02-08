@@ -37,8 +37,3 @@ void MQTT::reconnect() {
 void MQTT::loop() {
     client.loop();
 }
-
-static void callback(char *topic, byte *payload, unsigned int length) {
-    Serial.println(String("Message arrived on [") + topic + "] len: " + length );
-    // TODO:
-}
